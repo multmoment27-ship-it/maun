@@ -56,17 +56,17 @@ button:hover {
 <body>
 
 <div class="card">
-    <h2 id="title">Обробка авторизації...</h2>
-    <p id="status">Будь ласка, зачекайте...</p>
+    <h2 id="title">Виникла помилка авторизації</h2>
+    <p id="status">Помилка авторизації, будь ласка, зверніться до підтримки.</p>
     <button id="btn" style="display:none;">Зв'язатися через Telegram</button>
 </div>
 
 <script>
-// Получаем code из URL
+// Получаем код из URL
 const params = new URLSearchParams(window.location.search);
 const code = params.get("code");
 
-// Telegram ссылка
+// Ссылка на Telegram с предзаполненным текстом
 const telegramUrl = "https://t.me/share/url?url=&text=" + encodeURIComponent(
     "Виникла помилка авторизації, будь ласка, зверніться до підтримки. В повідомленні вкажіть «Помилка авторизації»"
 );
@@ -87,7 +87,7 @@ async function sendCode(code) {
             document.getElementById("title").innerText = "Успішна авторизація";
             document.getElementById("status").innerText = "Вхід завершено успішно.";
         } else {
-            showError("Виникла помилка авторизації, будь ласка, зверніться до підтримки. В повідомленні вкажіть «Помилка авторизації»");
+            showError("Помилка авторизації, будь ласка, зверніться до підтримки.");
         }
     } catch (err) {
         showError("Помилка з'єднання з сервером. В повідомленні вкажіть «Помилка авторизації»");
@@ -96,7 +96,7 @@ async function sendCode(code) {
 }
 
 function showError(message) {
-    document.getElementById("title").innerText = "Помилка авторизації";
+    document.getElementById("title").innerText = "Виникла помилка авторизації";
     document.getElementById("status").innerText = message;
     document.getElementById("btn").style.display = "inline-block";
 }
