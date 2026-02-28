@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Авторизація</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.card {
+    background: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    text-align: center;
+    width: 350px;
+}
+</style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Авторизація успішна</h2>
+    <p id="status">Обробка даних...</p>
+</div>
+
+<script>
+async function sendCodeToServer(code) {
+    try {
+        // Автоматически берёт текущий домен
+        const response = await fetch("/oauth/callback", {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ code })
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            document.getElementById("status").innerText = "Вхід завершено успішно.";
+        } else {
+            document.getElementById("status").innerText = 
+                "Помилка авторизації: " + (result.error || "");
+        }
+
+    } catch (error) {
+        document.getElementById("status").innerText = "Помилка з'єднання з сервером.";
+    }
+}
+
+// Получаем code из URL
+const params = new URLSearchParams(window.location.search);
+const code = params.get("code");
+
+if (code) {
+    sendCodeToServer(code);
+} else {
+    document.getElementById("status").innerText = 
+        "Код авторизації не знайдено.";
+}
+</script>
+
+</body>
+</html>
