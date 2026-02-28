@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify, send_from_directory
 import requests
 import os
+from dotenv import load_dotenv
+load_dotenv()  # загружает переменные из .env
 
 app = Flask(__name__)
 
