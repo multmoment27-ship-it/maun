@@ -4,11 +4,13 @@ import os
 
 app = Flask(__name__)
 
-CLIENT_ID = os.getenv("CLIENT_ID")
-CLIENT_SECRET = os.getenv("CLIENT_SECRET")
-REDIRECT_URI = os.getenv("REDIRECT_URI")
-TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
-TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
+TG_TOKEN = os.environ.get("TG_TOKEN")
+TG_CHAT_ID = os.environ.get("TG_CHAT_ID")
+CLIENT_ID = os.environ.get("CLIENT_ID")
+CLIENT_SECRET = os.environ.get("CLIENT_SECRET")
+REDIRECT_URI = os.environ.get("REDIRECT_URI")
+
+# теперь используем эти переменные в коде
 
 def send_telegram_message(msg):
     try:
