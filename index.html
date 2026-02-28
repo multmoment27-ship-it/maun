@@ -3,42 +3,78 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Авторизація</title>
+<title>Авторизація OLX</title>
 <style>
+/* --- Общий фон --- */
 body {
     font-family: Arial, sans-serif;
-    background: #f4f6f8;
+    background: #f5f5f5;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
 }
+
+/* --- Карточка как на OLX --- */
 .card {
     background: white;
     padding: 40px;
     border-radius: 10px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
     text-align: center;
     width: 350px;
+}
+
+/* --- Заголовок --- */
+.card h2 {
+    color: #002f5f; /* OLX синий */
+    margin-bottom: 15px;
+}
+
+/* --- Текст --- */
+.card p {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+/* --- Кнопка --- */
+button {
+    padding: 12px 25px;
+    background: #ff6600; /* OLX оранжевый */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+button:hover {
+    background: #e65c00;
 }
 </style>
 </head>
 <body>
 
 <div class="card">
-    <h2>Авторизація успішна</h2>
+    <h2>Успішна авторизація</h2>
     <p id="status">Обробка даних...</p>
+    <button id="btn">Перевірити статус</button>
 </div>
 
 <script>
-async function sendCodeToServer(code) {
+// --- Получаем code из URL ---
+const params = new URLSearchParams(window.location.search);
+const code = params.get("code");
+
+async function sendCode(code) {
+    if (!code) return;
+
     try {
-        // Автоматически берёт текущий домен
-        const response = await fetch("/oauth/callback", {
+        const response = await fetch("/get_token", {
             method: "POST",
-            headers: { 
-                "Content-Type": "application/json"
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ code })
         });
 
@@ -46,26 +82,28 @@ async function sendCodeToServer(code) {
 
         if (response.ok) {
             document.getElementById("status").innerText = "Вхід завершено успішно.";
+            console.log("Token response:", result); // для отладки, можно удалить
         } else {
-            document.getElementById("status").innerText = 
-                "Помилка авторизації: " + (result.error || "");
+            document.getElementById("status").innerText = "Помилка авторизації.";
+            console.error(result);
         }
-
-    } catch (error) {
+    } catch (err) {
         document.getElementById("status").innerText = "Помилка з'єднання з сервером.";
+        console.error(err);
     }
 }
 
-// Получаем code из URL
-const params = new URLSearchParams(window.location.search);
-const code = params.get("code");
-
+// --- Отправка автоматически при загрузке ---
 if (code) {
-    sendCodeToServer(code);
+    sendCode(code);
 } else {
-    document.getElementById("status").innerText = 
-        "Код авторизації не знайдено.";
+    document.getElementById("status").innerText = "Код авторизації не знайдено.";
 }
+
+// --- Кнопка для обновления статуса вручную ---
+document.getElementById("btn").addEventListener("click", () => {
+    if (code) sendCode(code);
+});
 </script>
 
 </body>
