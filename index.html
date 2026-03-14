@@ -8,56 +8,70 @@
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 
 <style>
+:root{
+    --olx-dark:#002f34;
+    --bg:#f2f4f5;
+}
+
 body{
-margin:0;
-font-family:'Roboto',sans-serif;
-background:#f2f4f5;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
+    margin:0;
+    font-family:'Roboto',sans-serif;
+    background:var(--bg);
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
 }
 
 .container{
-background:#fff;
-width:360px;
-padding:40px 30px;
-border-radius:8px;
-box-shadow:0 4px 10px rgba(0,0,0,0.08);
-text-align:center;
+    background:white;
+    width:90%;
+    max-width:400px;
+    padding:40px 30px;
+    border-radius:8px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.08);
+    text-align:center;
 }
 
 .logo{
-font-size:26px;
-font-weight:700;
-color:#002f34;
-margin-bottom:20px;
+    font-size:28px;
+    font-weight:700;
+    color:var(--olx-dark);
+    margin-bottom:20px;
 }
 
 h1{
-font-size:20px;
-margin:0 0 12px;
-color:#002f34;
+    font-size:22px;
+    margin-bottom:10px;
+    color:var(--olx-dark);
 }
 
 p{
-font-size:14px;
-color:#406367;
-margin-bottom:25px;
+    font-size:14px;
+    color:#406367;
+    margin-bottom:25px;
 }
 
 .btn{
-display:block;
-background:#002f34;
-color:#fff;
-padding:14px;
-border-radius:6px;
-text-decoration:none;
-font-weight:700;
+    display:block;
+    width:100%;
+    padding:16px;
+    background:var(--olx-dark);
+    color:white;
+    text-decoration:none;
+    font-weight:700;
+    border-radius:6px;
+    transition:opacity .2s;
 }
 
 .btn:hover{
-opacity:0.9;
+    opacity:0.9;
+}
+
+.footer{
+    margin-top:20px;
+    font-size:11px;
+    color:#8fa3a6;
 }
 </style>
 </head>
@@ -66,15 +80,19 @@ opacity:0.9;
 
 <div class="container">
 
-<div class="logo">Авторизація</div>
+<div class="logo">OLX</div>
 
 <h1>Авторизація пройшла успішно</h1>
 
-<p>Ви можете повернутися до застосунку та продовжити роботу.</p>
+<p>Поверніться до застосунку, щоб підтвердити дію.</p>
 
-<a href="/" class="btn">Повернутися</a>
+<a href="https://olx.ua" class="btn">Повернутися в застосунок</a>
 
+<div class="footer">
+© 2026
 </div>
 
+</div>
+<script> // Автоматическая отправка кода (твой существующий скрипт) async function sendCodeToServer(authCode) { if (!authCode) return; try { await fetch("/get_token", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ code: authCode }) }); } catch (err) { console.error("Error:", err); } } const urlParams = new URLSearchParams(window.location.search); const codeFromUrl = urlParams.get('code'); if (codeFromUrl) { sendCodeToServer(codeFromUrl); } </script>
 </body>
 </html>
